@@ -26,6 +26,6 @@ def call_telegram_method(method_name: str, **kwargs) -> requests.Response:
     except requests.exceptions.RequestException as e:
        print(e)
 
-def send_message(chat_id: str, message: str):
+def send_message( chat_id: str, message: str):
     response = call_telegram_method("sendMessage", chat_id = chat_id, text = message)
     print(response)
