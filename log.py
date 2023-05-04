@@ -23,17 +23,16 @@ def log(cb):
         return_value = cb(*args,**kwargs)
         args_string = " ,".join([str(arg) for arg in args])
         kwargs_string = " ,".join([f"{key} = {value}" for (key, value) in kwargs.items()])
-        # Initialize context manager 
+        # Initialize context manager “
         with open(f"{os.getcwd()}/logs/" + config.get("file_name"), 'a') as log_file: 
             log_file.write("-----------------------------------------------------------------\n")
             log_file.write(f"The function {cb.__name__} was called with this args at timestamp {time_str}.\n")
             if config.get("show_parameters") == True: 
                 log_file.write(f"The input parameters were:\n" f"*Args : {args_string}\n" if len(args_string) != 0 else '' + f"*Kwargs : {kwargs_string}\n" if len(kwargs_string) != 0 else '')
             if config.get("optional_message") != None:
-                log_file.write(f"A optional message : \n" + config.get("optional_message") + "\n")
+                log_file.write(f"A optional message : " + config.get("optional_message") + "\n")
             if config.get("return_value") == True and return_value != None:
-                log_file.write(f"The return value : \n" + return_value + "\n")
+                log_file.write(f"The return value : " + str(return_value) + "\n")
             log_file.write("-----------------------------------------------------------------\n")
         return return_value
-    
     return wrapper 
