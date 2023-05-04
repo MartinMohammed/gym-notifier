@@ -50,8 +50,7 @@ class Studio:
         If match, send one message each day via telegram to the user. 
         '''
 
-        # Only do the checking between 5PM and 7PM 
-        now = datetime.datetime.now() # German time format 0 - 24h
+       
         notification_sent_today = False # Only send one message a day!
         
 
@@ -60,7 +59,6 @@ class Studio:
         assert specific_studio_name in cls.all_dict, f"Specified studio name '{specific_studio_name}' is not valid!"
         if maximum == None: 
             maximum = cls.all_dict.get(specific_studio_name).maximum_people # The default value
-        print
         if time_interested_in.get("end") == None or time_interested_in.get("end") < time_interested_in.get("start"):
             time_interested_in["get"] = 23 # the default value 
 
@@ -71,6 +69,8 @@ class Studio:
         assert recipient_name != "", "Your name must be specified for the message."
         # Infinite loop to keep the process going 
         while True:   
+            # Only do the checking between 5PM and 7PM 
+            now = datetime.datetime.now() # German time format 0 - 24h
             if not notification_sent_today:  
                 # Time range the user is interested in
                 if now.hour >= time_interested_in.get("start") and now.hour <= time_interested_in.get("end"):
