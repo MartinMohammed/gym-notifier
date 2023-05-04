@@ -1,3 +1,4 @@
+import sys
 import time
 from decouple import config
 
@@ -27,4 +28,4 @@ while True:
         \nWir sehen uns im Fitnessstudio!"
         """.strip()
         send_message(chat_id=TELEGRAM_CHAT_ID, message = message)
-    
+        sys.exit() # end the program 
