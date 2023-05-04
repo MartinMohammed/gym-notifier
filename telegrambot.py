@@ -19,13 +19,12 @@ def call_telegram_method(method_name: str, **kwargs) -> requests.Response:
         for (key, value) in kwargs.items():
             query_string += f'{key}={value}&'
     try:
-        print(query_string)
         response = requests.get(f"{TELEGRAM_API_URL}/bot{TELEGRAM_API_ACCESS_TOKEN}/{method_name}{query_string}") 
         response.raise_for_status() # if status code is not 200 / OK
         return response.json()
     except requests.exceptions.RequestException as e:
        print(e)
 
-def send_message( chat_id: str, message: str):
+# @log
+def send_message( chat_id: str, message: str) -> None:
     response = call_telegram_method("sendMessage", chat_id = chat_id, text = message)
-    print(response)
