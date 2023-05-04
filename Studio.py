@@ -202,11 +202,12 @@ class Studio:
             studios = table_body.find_all("tr")
         
             studio_row_number = Studio.all_dict.get(studio_name).document_table_row_number
-            studio_data_rows = studios.get(studio_row_number).find_all('td')
-            location, new_current, new_maximum_people =  Studio.__extract_studio_data_from_row(studio_data_rows)
+            studio_data_rows = studios[studio_row_number].find_all('td')
+            location, new_current, new_maximum_people =  Studio.__extract_studio_data_from_row(studio_data_rows).values()
             # Now update the studio data from the fetched data
+
             Studio.all_dict.get(location).current = new_current 
-            Studio.all_dict.get(location).maximum_people = new_maximum_people 
+            Studio.all_dict.get(location).location = new_maximum_people 
             # OPTIONAL CALLBACK CALL WITH THE STUDIO DATA FETCHED 
             if(cb != None):
                 return_value = cb({"location": location, "studio_row_number" : studio_row_number, "current": new_current, "maximum_people" : new_maximum_people})
@@ -296,7 +297,6 @@ class Studio:
 
         location = studio_row[0].text.strip()
         try:
-
             maximum_people = int(studio_row[1].text)
             current = int(studio_row[2].text)
         except ValueError as verr: 
@@ -304,7 +304,7 @@ class Studio:
             print(f'Failed to convert string to integer: {verr}')
 
         assert location != "", "The location string is not allowed to be empty!"
-        return {location: location, current: current, maximum_people: maximum_people}
+        return {"location": location, "current": current, "maximum_people": maximum_people}
 
     # ------------------- MAGIC METHODS -------------------
     def __init__(self, document_table_row_number: int, location: str, current: int, maximum_people: int):
