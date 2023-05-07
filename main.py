@@ -8,12 +8,22 @@ Studio.instantiate_studios()
 
 
 ''''
-CONFIGURATION
+DEFAULTL CONFIGURATION
 '''
 TARGET_STUDIO = "Griesheim"
 TARGET_MINIMUM = 70
 MY_NAME = "Martin"
 TIME_INTERESTED_IN = {"start": 17, "end": 18} # included [start, end + 1)
+
+
+
+try: 
+    # SET UP THE PROGRAM -- GET THE REQUIRED INPUT 
+    target_minimum = int(input("Please enter a target minimum of people in the studio: ")) 
+    start_time = int(input("Please enter the start hour (e.g. 17h) you are interested in: "))
+    end_time = int(input("Please enter the end hour (e.g. 21h) you are intersted in: "))
+except Exception as e: 
+    print(f"There was an error with receiving the configuration input:\n {e}")
 
 
 # internal On-going process (infinite while looop!)
