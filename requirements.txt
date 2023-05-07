@@ -1,0 +1,4 @@
+python-decouple
+requests
+bs4
+html5lib

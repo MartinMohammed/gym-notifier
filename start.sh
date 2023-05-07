@@ -26,24 +26,29 @@ fi
 
 # Make sure the venv environemt is activated
 source "$PWD/bin/activate"
+
 if [ $? -eq 0 ]; then
     echo "Venv environment was started succesfully."
 else
     echo "There was an error in activating the venv python environment."
+    exit 1
 fi
 
-# Make sure the venv environemt is activated
-source "$PWD/bin/activate"
-if [ $? -eq 0 ]; then
-    echo "Program was started successfully."
+# Make sure all required packages are installed
+pip3 install -r "$PWD/requirements.txt"
+
+if [ $? -eq 0 ]; then 
+    echo "Required packages were installed succesfully."
 else 
-    echo "There wa an error in running the python3 main.py program."
+    exit 1
 fi
+
 
 # Run the program as background process
-python3 "$PWD/main.py" $target_minimum $start_time $end_time &
+python3 "$PWD/main.py" $target_minimum $start_time $end_time
 if [ $? -eq 0 ]; then
     echo "Program started successfully."
 else 
     echo "There was an error running the Python script."
+    exit 1
 fi
