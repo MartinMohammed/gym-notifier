@@ -31,5 +31,5 @@ if __name__ == "__main__":
         request_cycle_logger.critical(f"Entered notification program configuration input caused an error:\n{e}", exc_info=True)
     else:
         Studio.notify_on_people_amount_criteria(time_interested_in= {"start": start_time, "end": end_time}, recipient_name= name, minimum= target_minimum, maximum= None, specific_studio_name= gym_name, telegram_chat_id= TELEGRAM_CHAT_ID)
-
-
+else: 
+    print("This program must be ran as the main program.")

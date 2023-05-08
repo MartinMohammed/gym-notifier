@@ -427,3 +427,7 @@ if __name__ != "__main__":
         @maximum_people.setter
         def maximum_people(self, value: int):
             self.__maximum_people = value 
+
+
+elif __name__ == "__main__":
+    print(f"This module cannot be ran as the main program, instead must be imported.")

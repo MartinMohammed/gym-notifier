@@ -22,3 +22,6 @@ if __name__ != "__main__":
             request_cycle_logger.info(f"Successfully made an Request to {url}.")
             return raw_html
             
+
+elif __name__ == "__main__":
+    print(f"This module cannot be ran as the main program, instead must be imported.")

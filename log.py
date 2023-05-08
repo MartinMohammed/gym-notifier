@@ -39,3 +39,7 @@ if __name__ != "__main__":
                 log_file.write("-----------------------------------------------------------------\n")
             return return_value
         return wrapper 
+    
+
+elif __name__ == "__main__":
+    print(f"This module cannot be ran as the main program, instead must be imported.")

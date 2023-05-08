@@ -41,3 +41,5 @@ if __name__ != "__main__":
         response = call_telegram_method("sendMessage", chat_id = chat_id, text = message)
         return response
 
+elif __name__ == "__main__":
+    print(f"This module cannot be ran as the main program, instead must be imported.")
