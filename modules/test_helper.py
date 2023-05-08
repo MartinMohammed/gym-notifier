@@ -27,22 +27,6 @@ class TestHelper(unittest.TestCase):
     def tearDown(self):
         pass
 
-    # def test_make_http_request(self):
-    #     with patch("helper.make_http_request") as mocked_get:
-    #         # Set properties on the mocked object -- return props 
-    #         mocked_get.return_value.status_code = 200
-    #         mocked_get.return_value.content = b"<h2>Success</h2>"
-
-    #         # Run the function 
-    #         raw_html = make_http_request(config("FITNESS_FABRIK_BASE_URL"))
-
-    #         # Check function call parameters
-    #         mocked_get.assert_called_with(config("FITNESS_FABRIK_BASE_URL"))
-
-    #         # Check the return value of the function call 
-    #         self.assertEqual(raw_html, b"<h2>Success</h2>")
-
-
     def test_calculate_sleep_time_in_minutes(self):
         # ----------------- START_TIME > CURRENT_TIME = SAME DAY-----------------
         time_interested_in = {"start": 17, "end": 9}
