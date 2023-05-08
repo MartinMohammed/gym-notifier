@@ -2,8 +2,39 @@
 if __name__ == "__main__":
     from decouple import config
     import sys
+    import unittest
     import logging, logging.config
+    import time
     logging.config.fileConfig("logging.conf")
+    
+
+     # ------------ DISOVER AND RUN ALL THE TEST CASES IN A GIVEN DIR ------------
+    # responsible for loading the tests 
+    test_loader = unittest.TestLoader()
+
+    # Discover all the test caess in the directory that match the pattern 
+    # Returns an TestSuite object that contains all the discovered tests
+    test_suite = test_loader.discover(start_dir='./modules', pattern='test_*') 
+
+
+    # test runner, runningn the tests and reporting the results
+    test_runner = unittest.TextTestRunner() 
+    
+    # runs the the tests in the TestSuite object 
+    # results are printed in the consule using text output.
+
+    # test_result : TextTestReuslt object, which provides info.
+    # about the test run, inclduing the number of tests run, the number
+    # of failures and the number of errors
+    root_logger = logging.getLogger()
+        
+    test_result = test_runner.run(test_suite)
+    if not test_result.wasSuccessful():
+        root_logger.critical(f"{test_result.failures} tests failed.")
+        sys.exit(1)
+    else: 
+        root_logger.info("All tests passed.")
+    # time.sleep(10)
 
     # Own classes 
     from modules import Studio 

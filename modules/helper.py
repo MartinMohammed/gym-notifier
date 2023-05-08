@@ -52,11 +52,15 @@ if __name__ != "__main__":
 
         # If the user is interested in a time that is today (e.g. interested in 9h and it is 17h),
         # then calculate the time difference until that time tomorrow (e.g. sleep for 16 hours)
+
+        # When 00:00 is reached, current_time.hour will become smaller than time_intersted_in.get("start") 
+        # which will cause to execute block 1 and calculate the amount of minutes until the point of time
+        # at the same day
         else:
             # The number of minutes until the next hour
             minutes_difference = 60 - current_time.minute
             # The number of hours until the interested time tomorrow
-            hours_difference = (24 - current_time.hour) + time_interested_in.get("start")
+            hours_difference = (24 - current_time.hour)
             # The total number of minutes to sleep
             total_minutes = ((minutes_difference)) + ((hours_difference - 1) * 60)
             return total_minutes

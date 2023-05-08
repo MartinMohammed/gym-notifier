@@ -12,8 +12,8 @@ if __name__ != "__main__":
 
     # Own libs
     # from log import log
-    from .helper import make_http_request, calculate_sleep_time_in_minutes
-    from .telegrambot import send_message
+    from helper import make_http_request, calculate_sleep_time_in_minutes
+    from telegrambot import send_message
 
 
     root_logger = logging.getLogger("root_logger")
@@ -55,7 +55,7 @@ if __name__ != "__main__":
                 maximum_people = studio.get("maximum_people")
                 cls.all_dict[location] = Studio(document_table_row_number=row_number, location = location, current = current, maximum_people = maximum_people)
             request_cycle_logger.info("Successfull instantiated studios.")
-
+            print(cls.all_dict)
 
         @classmethod
         def notify_on_people_amount_criteria(cls, time_interested_in, minimum: int = None, maximum: int = None, specific_studio_name = "", telegram_chat_id: str = "", recipient_name: str = ""):
@@ -77,7 +77,7 @@ if __name__ != "__main__":
             '''
             try:
                 # Do some validation 
-                assert cls.__check_location_exists(specific_studio_name), f"Specified studio name '{specific_studio_name}' is not valid!"
+                assert cls.check_location_exists(specific_studio_name), f"Specified studio name '{specific_studio_name}' is not valid!"
                 if maximum == None: 
                     maximum = cls.all_dict.get(specific_studio_name).maximum_people # The default value
                 if time_interested_in.get("end") == None or time_interested_in.get("end") < time_interested_in.get("start"):
@@ -161,7 +161,7 @@ if __name__ != "__main__":
                 print(json.dumps(vars(specific_studio), indent=4)) # do the json formatted print 
 
         @classmethod 
-        def __check_occupancy(cls, minimum: int = None, maximum: int = None, specific_studio_name = "") -> object:
+        def __check_occupancy(cls, minimum: int = None, maximum: int = None, specific_studio_name = "") -> dict:
             '''
             This is a class method called __check_occupancy hat checks if a specific studio meets a user-defined 
             set of criteria regarding the number of people currently inside the studio. with the following parameters:
@@ -236,7 +236,7 @@ if __name__ != "__main__":
             This is a static method called __get_occupancy_data in the Studio class. It updates the data of a specified studio, given the name of the studio.
             The method takes in two arguments, studio_name and cb. The studio_name argument is a string representing the name of the studio whose data is to be updated.
             The cb argument is an optional callback function that receives the fetched Studio data.
-            The method first checks if the specified studio_name is valid by calling the __check_location_exists method, which checks if the studio is already saved.
+            The method first checks if the specified studio_name is valid by calling the check_location_exists method, which checks if the studio is already saved.
             If the studio name is invalid, an error message is logged. If the studio name is valid, the method proceeds to fetch the data for the specified studio from a URL using the make_http_request function.
             The fetched data is then parsed using the BeautifulSoup library, and the relevant data is extracted from the parsed HTML. The studio data is then updated based on the fetched data.
             If a callback function was provided, it is called with the fetched studio data as an argument.
@@ -244,7 +244,7 @@ if __name__ != "__main__":
             '''
             try:
                 # Check if the studio is already saved -- because we do fetch all in the beginning
-                assert Studio.__check_location_exists(studio_name), f"Specified studio name '{studio_name}' is not valid!"
+                assert Studio.check_location_exists(studio_name), f"Specified studio name '{studio_name}' is not valid!"
             except AssertionError as e:
                 # If the studio name is invalid, just update all studios 
                 # IMPORTANT: prints the program's location, the line where the error was encountered, and the name and relevant information about the error.
@@ -320,6 +320,7 @@ if __name__ != "__main__":
 
             # The data we are interested in are in table rows 
             data = soup.find("table", attrs = {'id': "meineTabelle"})
+            
             table_body = data.tbody
 
             studios = []
@@ -349,7 +350,7 @@ if __name__ != "__main__":
 
 
         @staticmethod
-        def __extract_studio_data_from_row(studio_row):
+        def __extract_studio_data_from_row(studio_row) -> dict:
             '''
             This function takes in a list of table data cells containing data for a single studio, extracts the location, current occupancy, and maximum occupancy data from it,
             erforms some validation, and returns a dictionary containing the extracted data.
@@ -372,7 +373,7 @@ if __name__ != "__main__":
                 return {"location": location, "current": current, "maximum_people": maximum_people}
 
         @staticmethod
-        def __check_location_exists(location: str) -> bool:
+        def check_location_exists(location: str) -> bool:
             return True if location in Studio.all_dict else False
 
         # ------------------- MAGIC METHODS -------------------
