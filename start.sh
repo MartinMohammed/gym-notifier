@@ -1,13 +1,25 @@
 #!/bin/bash
-# Get the user input for the program to run 
-echo -n "Please enter the target minimum of people in the gym: "
+# --------------------- GET USER INPUT  ---------------------
+echo -n "Welcome to the gym tracker program! Please enter your name: "
+read -n name
+
+echo -n "Please enter the name of the gym you want to track: "
+read gym_name
+
+echo -n "What is the minimum number of people you want to see in the gym? Please enter a number: "
 read target_minimum
 
-echo -n "Please enter the start time you are interested (e.g. 17) in tracking the gym: "
+echo -n "What is the start time you are interested in tracking? Please enter the hour in 24-hour format (e.g. 17): "
 read start_time
 
-echo -n "Pleae enter the end time (e.g. 21) you are interested in tracking the gym: "
+echo -n "What is the end time you are interested in tracking? Please enter the hour in 24-hour format (e.g. 21): "
 read end_time
+
+echo "Thank you, $name. The program will now track the gym from $start_time:00 to $end_time:00 and alert you if the number of people falls below $target_minimum."
+
+
+# --------------------- CONFIGURATION & PACKAGE INSTALLATION---------------------
+
 
 # if is a shell keyword that starts a conditional statement. If the condition in the statement is true, the commands in the then block are executed; otherwise, the commands in the else block (if present) are executed.
 # ! is a shell operator that negates the exit status of a command. If the command succeeds (i.e., exits with a zero status), the ! operator turns the exit status to non-zero (1). If the command fails (i.e., exits with a non-zero status), the ! operator turns the exit status to zero.
@@ -44,8 +56,10 @@ else
 fi
 
 
+# --------------------- RUN THE PROGRAM ---------------------
+
 # Run the program as background process
-python3 "$PWD/main.py" $target_minimum $start_time $end_time
+python3 "$PWD/main.py" $name $gym_name $target_minimum $start_time $end_time
 if [ $? -eq 0 ]; then
     echo "Program started successfully."
 else 

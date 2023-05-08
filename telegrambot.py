@@ -5,6 +5,11 @@ A generic python library that helps to organize settings (development, productio
 '''
 from decouple import config
 import requests
+import sys
+import logging
+
+telegram_logger = logging.getLogger("telegram_logger")
+
 
 TELEGRAM_API_ACCESS_TOKEN = config("TELEGRAM_API_ACESS_TOKEN")
 TELEGRAM_CHAT_ID = config("MY_TELEGRAM_CHAT_ID")
@@ -21,10 +26,15 @@ def call_telegram_method(method_name: str, **kwargs) -> requests.Response:
     try:
         response = requests.get(f"{TELEGRAM_API_URL}/bot{TELEGRAM_API_ACCESS_TOKEN}/{method_name}{query_string}") 
         response.raise_for_status() # if status code is not 200 / OK
-        return response.json()
     except requests.exceptions.RequestException as e:
-       print(e)
+        # ! Telegram bot error logging
+        telegram_logger.critical(f"Error with Telegram method call: {method_name}. {e}")
+        sys.exit(1)
+    else: 
+        return response
 
 # @log
-def send_message( chat_id: str, message: str) -> None:
+def send_message( chat_id: str, message: str) -> requests.Response:
     response = call_telegram_method("sendMessage", chat_id = chat_id, text = message)
+    return response
+
