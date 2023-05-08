@@ -11,8 +11,8 @@ from bs4 import BeautifulSoup
 from decouple import config
 
 # Own libs
-from helper import make_http_request, calculate_sleep_time_in_minutes
-from telegrambot import send_message
+from .helper import make_http_request, calculate_sleep_time_in_minutes
+from .telegrambot import send_message
 
 # ----------- GET LOGGER -----------
 root_logger = logging.getLogger("root_logger")
