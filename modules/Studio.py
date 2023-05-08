@@ -8,12 +8,12 @@ if __name__ != "__main__":
     import time
     import datetime
     import logging
-    from helper import make_http_request
     from decouple import config
 
     # Own libs
     # from log import log
-    from telegrambot import send_message
+    from .helper import make_http_request, calculate_sleep_time_in_minutes
+    from .telegrambot import send_message
 
 
     root_logger = logging.getLogger("root_logger")
@@ -130,16 +130,20 @@ if __name__ != "__main__":
                             time.sleep(REFRESH_CYCLE_TIME * 60)
                     # Important presumption is that start < end, made sure with validation 
                     else: 
-                            request_cycle_logger.info(f"Not in the time interval {time_interested_in.get('start')}:00-{time_interested_in.get('end')}:00 the user is interested in. Sleep until {time_interested_in.get('start')}:00!")
-                            # Lets say the user is interested in 17h and it is 9h, then sleep 17 - 9 = 8 hours 
-                            if(time_interested_in.get("start") > now.hour):
-                                hours_difference = time_interested_in.get("start") - now.hour 
-                                time.sleep(hours_difference * 60 * 60)
-                            # lets say the user is intersted in 9h and it is 17h, then sleep 24 - 17 + 9 = 16 hours
-                            else:
-                                hours_difference = (24 - now.time) + time_interested_in.get("start")
-                                time.sleep(hours_difference * 60 * 60)
-
+                        '''
+                        If the user is interested in a time that is later than the current time, 
+                        and the time of interest is on the next day, calculate the amount of minutes 
+                        until 00:00 AM of the next day. 
+                        
+                        Otherwise, if the time of interest is on the 
+                        same day and later than the current time, calculate the amount of minutes 
+                        until the time of interest.
+                        '''
+                        next_day = time_interested_in.get("start") > now.hour
+                        sleep_time_in_minutes = calculate_sleep_time_in_minutes(time_interested_in=time_interested_in, current_time=now, next_day=next_day)
+                        request_cycle_logger.info(f"Not in the time interval {time_interested_in.get('start')}:00-{time_interested_in.get('end')}:00 the user is interested in. Sleep until {time_interested_in.get('start')}:00! ({sleep_time_in_minutes}mins)")
+                        time.sleep(60 * sleep_time_in_minutes)
+    
 
         @classmethod
         def __pretty_print_studios(cls, specific_studio_name = "") -> None:

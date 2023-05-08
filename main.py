@@ -6,7 +6,7 @@ if __name__ == "__main__":
     logging.config.fileConfig("logging.conf")
 
     # Own classes 
-    from Studio import Studio 
+    from modules import Studio 
 
     TELEGRAM_CHAT_ID = config("MY_TELEGRAM_CHAT_ID")
     Studio.instantiate_studios()
