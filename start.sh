@@ -1,7 +1,7 @@
 #!/bin/bash
 # --------------------- GET USER INPUT  ---------------------
 echo -n "Welcome to the gym tracker program! Please enter your name: "
-read -n name
+read name
 
 echo -n "Please enter the name of the gym you want to track: "
 read gym_name

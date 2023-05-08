@@ -38,13 +38,13 @@ class Studio:
     def instantiate_studios(cls) -> None: 
         '''
         This function instantiates a Studio object for each studio and adds it to the class's all_dict dictionary.
-        studios = cls.__update_all_studio_data() retrieves all the studios and their data from the website by calling the __update_all_studio_data() method of the class.
+        studios = cls.__get_all_occupancy_data() retrieves all the studios and their data from the website by calling the __get_all_occupancy_data() method of the class.
         The for loop then iterates over each studio in the studios list, and extracts the row number, location, current number of people, and maximum number of people allowed for the studio.
         The cls.all_dict[location] = Studio(...) line creates a new Studio object with the extracted data and adds it to the all_dict dictionary with the location as the key.
         The last line logs a message indicating that all the studios were successfully instantiated.
         Overall, this method is responsible for initializing the Studio objects and making them available in the all_dict dictionary for other methods to use.
         '''
-        studios = cls.__update_all_studio_data()
+        studios = cls.__get_all_occupancy_data()
         for studio in studios:
             row_number = studio.get("row_number")
             location = studio.get("location")
@@ -95,7 +95,7 @@ class Studio:
                 now = datetime.datetime.now() # German time format 0 - 24h
                 # Time range the user is interested in and not sent and notification today
                 if now.hour >= time_interested_in.get("start") and now.hour <= time_interested_in.get("end"):
-                    studio_check_request = Studio.__check_studio_people_on_criteria(specific_studio_name=specific_studio_name, minimum=minimum, maximum=maximum)
+                    studio_check_request = Studio.__check_occupancy(specific_studio_name=specific_studio_name, minimum=minimum, maximum=maximum)
                     root_logger.info(f'{now.strftime("%m/%d/%Y, %H:%M:%S")} {str(studio_check_request)}')
                     
                     # Criteria fullfilled -> send message
@@ -127,7 +127,7 @@ class Studio:
                         time.sleep(REFRESH_CYCLE_TIME * 60)
                 # Important presumption is that start < end, made sure with validation 
                 else: 
-                        request_cycle_logger.info(f"Not in the time interval {time_interested_in.get('start')}:00-{time_interested_in.get('end')}:00) the user is interested in.")
+                        request_cycle_logger.info(f"Not in the time interval {time_interested_in.get('start')}:00-{time_interested_in.get('end')}:00 the user is interested in. Sleep until {time_interested_in.get('start')}:00!")
                         # Lets say the user is interested in 17h and it is 9h, then sleep 17 - 9 = 8 hours 
                         if(time_interested_in.get("start") > now.hour):
                             hours_difference = time_interested_in.get("start") - now.hour 
@@ -154,9 +154,9 @@ class Studio:
             print(json.dumps(vars(specific_studio), indent=4)) # do the json formatted print 
 
     @classmethod 
-    def __check_studio_people_on_criteria(cls, minimum: int = None, maximum: int = None, specific_studio_name = "") -> object:
+    def __check_occupancy(cls, minimum: int = None, maximum: int = None, specific_studio_name = "") -> object:
         '''
-        This is a class method called __check_studio_people_on_criteria hat checks if a specific studio meets a user-defined 
+        This is a class method called __check_occupancy hat checks if a specific studio meets a user-defined 
         set of criteria regarding the number of people currently inside the studio. with the following parameters:
 
         * cls: the class itself.
@@ -187,8 +187,8 @@ class Studio:
 
             try:
                 # Valdiation, atleast Minimum or Maximum must be defined
-                assert minimum != None, "Error. Minimum must be specified for checking studio people!"
-                assert maximum != None, "Error. Maximum must be specified for checking studio people!"
+                assert minimum != None and minimum < studio.get("maximum_people"), "Error. Minimum amount of people in Studio not set appropriately."
+                assert maximum != None and maximum <= studio.get("maximum_people"), "Error. Minimum amount of people in Studio not set appropriately."
             except Exception as e:
                 root_logger.error(f"There was an error with the Minimum and Maximum people amoutn in the Studio.{e}")
             else:
@@ -214,7 +214,7 @@ class Studio:
                 # Condition was fullfilled
                 return {"location": location,  "minimum": minimum, "maximum": maximum, "criteria_fullfilled": criteria_fullfilled, "current": current_people}
         try:
-            studio_criteria_check = cls.__update_studio_data(studio_name=specific_studio_name, cb=cb)
+            studio_criteria_check = cls.__get_occupancy_data(studio_name=specific_studio_name, cb=cb)
             assert studio_criteria_check != None, f"There was an Error with the criteria_fullfilled_result. It should be a boolean value, instead {studio_criteria_check.get('criteria_fullfilled')}!"
         except Exception as e:
             request_cycle_logger.error(e, exc_info=True)
@@ -224,9 +224,9 @@ class Studio:
 
     @staticmethod
     # @log
-    def __update_studio_data(studio_name: str, cb = None):
+    def __get_occupancy_data(studio_name: str, cb = None):
         '''
-        This is a static method called __update_studio_data in the Studio class. It updates the data of a specified studio, given the name of the studio.
+        This is a static method called __get_occupancy_data in the Studio class. It updates the data of a specified studio, given the name of the studio.
         The method takes in two arguments, studio_name and cb. The studio_name argument is a string representing the name of the studio whose data is to be updated.
         The cb argument is an optional callback function that receives the fetched Studio data.
         The method first checks if the specified studio_name is valid by calling the __check_location_exists method, which checks if the studio is already saved.
@@ -277,9 +277,9 @@ class Studio:
             
                                     
     @staticmethod
-    def __update_all_studio_data():
+    def __get_all_occupancy_data():
         '''
-        This is a private static method in the Studio class. The method __update_all_studio_data is used to fetch all the studios' data from a website and then instantiate a 
+        This is a private static method in the Studio class. The method __get_all_occupancy_data is used to fetch all the studios' data from a website and then instantiate a 
         Studio object for each studio and store them in a dictionary all_dict. It also determines the studio row number and name dict constant defined above.
 
         The method returns a list of dictionaries, where each dictionary represents a studio and contains the following keys:
