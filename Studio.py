@@ -22,7 +22,6 @@ class Studio:
     '''
     Studio(document_table_row_number: int, location: str, current_people: int, maximum: int)
     '''
-
     '''
     {
         [location]: Studio(document_table_row_number: int, location: str, current_people: int, maximum: int)
