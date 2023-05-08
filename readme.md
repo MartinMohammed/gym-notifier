@@ -10,7 +10,12 @@ This Python program uses [Beautiful Soup](https://www.crummy.com/software/Beauti
 
 The program also integrates a Telegram bot that sends messages to users whenever the gym occupancy meets the desired criteria (minimum and maximum). The bot is connected through an easy-to-implement API request to the Telegram server, which allows the community to interact with the bot in an automated way. By setting the criteria for the minimum and maximum number of people in the gym, users can receive notifications only when the gym occupancy meets their preferences.
 
-![An image of the Fitness Fabrik Telegram Bot](./images/Fitness-Fabrik-Telegram-Bot.png){ width=50% }
+<div style="text-align:center">
+    <img alt="An image of the Fitness Fabrik Telegram Bot" src="./images/Fitness-Fabrik-Telegram-Bot.png"  width="400" height="900">
+</div>
+
+
+
 
 Sure, here's the documentation in Markdown format:
 
