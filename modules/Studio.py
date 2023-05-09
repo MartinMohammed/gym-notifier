@@ -151,10 +151,8 @@ class Studio:
                         # The default message
                         message = f"""
                         Hey {recipient_name}!
-                        \nBereit, fit zu werden und Spaß zu haben? Komm zu uns ins
-                         Fitnessstudio in {studio_check_request.get("location")}!
-                        \nAktuell sind nur {studio_check_request.get("current")}
-                         Leute hier, also kannst du dein Workout ohne Menschenmassen genießen.
+                        \nBereit, fit zu werden und Spaß zu haben? Komm zu uns ins Fitnessstudio in {studio_check_request.get("location")}!
+                        \nAktuell sind nur {studio_check_request.get("current")} Leute hier, also kannst du dein Workout ohne Menschenmassen genießen.
                         \nVerpasse nicht die Gelegenheit, deine Gesundheit zu verbessern und neue Leute kennenzulernen!
                         \nWir sehen uns im Fitnessstudio!"
                         """.strip()
