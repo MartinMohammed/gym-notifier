@@ -42,5 +42,4 @@ if __name__ != "__main__":
         return response
 
 elif __name__ == "__main__":
-    print(f"This module cannot be ran as the main program, instead must be imported."
-          )
+    print(f"This module cannot be ran as the main program, instead must be imported.")

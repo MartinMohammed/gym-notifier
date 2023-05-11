@@ -2,7 +2,7 @@ import datetime
 # Ensure that this module can only be imported and
 # cannot be run as the main program
 if __name__ != "__main__":
-    import requests
+    # import requests
     # from log import log
     import logging 
     import logging.config
@@ -10,23 +10,24 @@ if __name__ != "__main__":
     # logging.config.fileConfig("logging.conf")
     request_cycle_logger = logging.getLogger("request_cycle")
 
-    def make_http_request(url: str):
-        """
-         Makes an HTTP request to the specified url and returns the content of the response.
+    # ------------------- LEGACY -- BEFORE USING PANDAS ------------------- 
+    # def make_http_request(url: str):
+    #     """
+    #      Makes an HTTP request to the specified url and returns the content of the response.
 
-        :param url: The url the request goes to.
-        """
+    #     :param url: The url the request goes to.
+    #     """
 
-        try:
-            response = requests.get(url)
-            response.raise_for_status()  # raise an HTTPError if the status code is not 200
-            raw_html = response.content  # type string
-        except requests.exceptions.RequestException as e:
-            request_cycle_logger.error(f"There was an error in making an request to {url}.\n{e}", exc_info=True)
-        else:
-            request_cycle_logger.info(f"Successfully made an Request to {url}.")
-            return raw_html
-            
+    #     try:
+    #         response = requests.get(url)
+    #         response.raise_for_status()  # raise an HTTPError if the status code is not 200
+    #         raw_html = response.content  # type string
+    #     except requests.exceptions.RequestException as e:
+    #         request_cycle_logger.error(f"There was an error in making an request to {url}.\n{e}", exc_info=True)
+    #     else:
+    #         request_cycle_logger.info(f"Successfully made an Request to {url}.")
+    #         return raw_html
+    # -------------------  ------------------- 
     def calculate_sleep_time_in_minutes(
             time_interested_in: dict[str, int], current_time: datetime.datetime
     ) -> int:

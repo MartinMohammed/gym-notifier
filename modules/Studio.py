@@ -10,11 +10,13 @@ if __name__ == "__main__":
 import time
 import logging
 import datetime
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup
+import pandas as pd
 from decouple import config
 
 # Own libs
-from .helper import make_http_request, calculate_sleep_time_in_minutes
+# from .helper import make_http_request
+from .helper import calculate_sleep_time_in_minutes
 from .telegrambot import send_message
 
 # ----------- GET LOGGER -----------
@@ -22,7 +24,6 @@ root_logger = logging.getLogger("root_logger")
 request_cycle_logger = logging.getLogger("request_cycle")
 
 REFRESH_CYCLE_TIME = 30  # minutes
-
 
 class Studio: 
     """
@@ -298,43 +299,68 @@ class Studio:
             # the line where the error was encountered, and the name and relevant information about the error.
             root_logger.error(e, exc_info=True)
         else: 
-            # old request made with @log decorator 
-            # raw_html = make_http_request(
-            # url = Studio.__URL, config = {"show_parameters": True,
-            # "file_name": "http-requests-logs.txt", "return_value": False})
-            raw_html = make_http_request(url=Studio.__URL)
-            soup = BeautifulSoup(raw_html, 'html5lib')
+            # ------------------- LEGACY -- BEFORE USING PANDAS -------------------
+            # # old request made with @log decorator 
+            # # raw_html = make_http_request(
+            # # url = Studio.__URL, config = {"show_parameters": True,
+            # # "file_name": "http-requests-logs.txt", "return_value": False})
+            # raw_html = make_http_request(url=Studio.__URL)
+            # soup = BeautifulSoup(raw_html, 'html5lib')
 
-            # Gives us the representation of the parse tree created from the raw html content
-            '''
-            Definition of 'parse Tree' / HTML structure of the document 
-            An ordered, rooted tree representing the structure of a sentence, broken down to parts-of-speech
-            '''
+            # # Gives us the representation of the parse tree created from the raw html content
+            # '''
+            # Definition of 'parse Tree' / HTML structure of the document 
+            # An ordered, rooted tree representing the structure of a sentence, broken down to parts-of-speech
+            # '''
 
-            # The data we are interested in are in table rows 
-            data = soup.find("table", attrs={'id': "meineTabelle"})
-            table_body = data.tbody
-            studios = table_body.find_all("tr")
+            # # The data we are interested in are in table rows 
+            # data = soup.find("table", attrs={'id': "meineTabelle"})
+            # table_body = data.tbody
+            # studios = table_body.find_all("tr")
         
-            studio_row_number = Studio.all_dict.get(studio_name).document_table_row_number
-            studio_data_rows = studios[studio_row_number].find_all('td')
-            location, new_current, new_maximum_people = Studio.__extract_studio_data_from_row(studio_data_rows).values()
+            # studio_row_number = Studio.all_dict.get(studio_name).document_table_row_number
+            # studio_data_rows = studios[studio_row_number].find_all('td')
+            # location, new_current, new_maximum_people = Studio.__extract_studio_data_from_row(studio_data_rows).values()
+            # --------------------------------------
+            df_studios = pd.read_html(Studio.__URL)[0]  # we just want the df
+
+            # Get the row where Studio == studio_name therefore using an boolean mask 
+            # Since we know there will only be exact one record containing our Studio == "Darmstadt"
+            # We ues ```iLoc``` to get only the row without the index
+            studio = df_studios[df_studios["Studio"] == studio_name].iloc[0]
+
             # Now update the studio data from the fetched data
 
-            Studio.all_dict.get(location).current = new_current 
-            Studio.all_dict.get(location).location = new_maximum_people 
+            Studio.all_dict.get(studio_name).current = studio["Studio"]
+            Studio.all_dict.get(studio_name).location = studio_name
             request_cycle_logger.info(f"Succesfull updated the updated the studio data of {studio_name}!")
 
             # OPTIONAL CALLBACK CALL WITH THE STUDIO DATA FETCHED 
             if cb is not None:
                 cb_return_value = cb(
-                    {"location": location, "studio_row_number": studio_row_number,
-                     "current": new_current, "maximum_people": new_maximum_people})
+                    {
+                        "location": studio_name,
+                        "studio_row_number": Studio.all_dict.get(studio_name).document_table_row_number,
+                        # Accessing the Column element in the Studio row
+                        "current": studio["Aktuell"], 
+                        "maximum_people": studio["Maximal"]})
                 return cb_return_value 
             
     @staticmethod
     def __get_all_occupancy_data():
         """
+        Uses ```pandas.read_html``` to extract the table from the target_website and puts it into a DataFrame.
+        This DataFrame will be used to create a list of studios in the structure of: 
+        ```
+        [ {
+                "row_number": index,
+                "location": row.loc["Studio"], 
+                "current": row.loc["Aktuell"], 
+                "maximum_people": row.loc["Maximal"], 
+            }]
+        ```
+
+        Old Description (no beautiful soup anymore needed): 
         This is a private static method in the Studio class. The method __get_all_occupancy_data
          is used to fetch all the studios' data from a website and then instantiate a
         Studio object for each studio and store them in a dictionary all_dict.
@@ -357,89 +383,121 @@ class Studio:
          and it's not intended to be called outside class.
         """
 
-        # old request made with @log decorator 
-        # raw_html = make_http_request(
-        # url=Studio.__URL, config = {"show_parameters": True, "file_name": "http-requests-logs.txt",
-        # "return_value": False})
-        raw_html = make_http_request(url=Studio.__URL)
-        # 2. Parsing the HMTL document 
         '''
-        BeautifulSoup library is that it is built on the top of the HTML parsing
-         libraries like html5lib, lxml, html.parser
-        '''
-        soup = BeautifulSoup(raw_html, 'html5lib')
-
-        # Gives us the representation of the parse tree created from the raw html content
-        '''
-        Definition of 'parse Tree' / HTML structure of the document 
-        An ordered, rooted tree representing the structure of a sentence, broken down to parts-of-speech
+        Reads the data from the HTML document, grabs the table and puts it into a python ordinary list containing a DataFrame
+        Return structure: 
+        [            Studio  Maximal  Aktuell  Wartend
+        0        Darmstadt      144       65        0
+        1    Groß-Bieberau       35       17        0
+        2     Groß-Umstadt       55       12        0
+        3    Eppertshausen       60        0        0
+        4          Dieburg       70       42        0
+        5      Niederroden      100       41        0
+        6        Griesheim      178       54        0
+        7  DA-Hauptbahnhof      132       79        0
+        ]
         '''
 
-        # 3. Searching and navigating through the parse tree 
-
-        # The data we are interested in are in table rows 
-        data = soup.find("table", attrs={'id': "meineTabelle"})
         
-        table_body = data.tbody
 
-        studios = []
-        for row_number, studio in enumerate(table_body.find_all("tr")): 
-            '''
-                    [<td>
-                        Darmstadt            </td>, } location 
-                    <td>
-                        144            </td> } maximum 
-                    <td>,
-                        49            </td>] } current 
-            '''
-            # location_data_cell, maximum_data_cell, current_data_cell = table_body.tr
-            # print(location_data_cell)
+        # ------------------- LEGACY -- BEFORE USING PANDAS -------------------
+        # # old request made with @log decorator 
+        # # raw_html = make_http_request(
+        # # url=Studio.__URL, config = {"show_parameters": True, "file_name": "http-requests-logs.txt",
+        # # "return_value": False})
+        # raw_html = make_http_request(url=Studio.__URL)
+        # # 2. Parsing the HMTL document 
+        # '''
+        # BeautifulSoup library is that it is built on the top of the HTML parsing
+        #  libraries like html5lib, lxml, html.parser
+        # '''
+        # soup = BeautifulSoup(raw_html, 'html5lib')
 
-            studio_data_cells = studio.find_all("td")
-            # Extract the studio data 
-            '''
-            Takes the extracted data for the particular studio and instantiates an object.
-            Appends the object in the 'all_dict'.
-            '''        
-            single_studio_data = Studio.__extract_studio_data_from_row(studio_row=studio_data_cells)
-            location, current, maximum_people = single_studio_data.values()
-            studio = {"row_number": row_number,
-                      "location": location, "current": current, "maximum_people": maximum_people}
-            studios.append(studio)
+        # # Gives us the representation of the parse tree created from the raw html content
+        # '''
+        # Definition of 'parse Tree' / HTML structure of the document 
+        # An ordered, rooted tree representing the structure of a sentence, broken down to parts-of-speech
+        # '''
+
+        # # 3. Searching and navigating through the parse tree 
+
+        # # The data we are interested in are in table rows 
+        # data = soup.find("table", attrs={'id': "meineTabelle"})
+        
+        # table_body = data.tbody
+
+        # studios = []
+        # for row_number, studio in enumerate(table_body.find_all("tr")): 
+        #     '''
+        #             [<td>
+        #                 Darmstadt            </td>, } location 
+        #             <td>
+        #                 144            </td> } maximum 
+        #             <td>,
+        #                 49            </td>] } current 
+        #     '''
+        #     # location_data_cell, maximum_data_cell, current_data_cell = table_body.tr
+        #     # print(location_data_cell)
+
+        #     studio_data_cells = studio.find_all("td")
+        #     # Extract the studio data 
+        #     '''
+        #     Takes the extracted data for the particular studio and instantiates an object.
+        #     Appends the object in the 'all_dict'.
+        #     '''        
+        #     single_studio_data = Studio.__extract_studio_data_from_row(studio_row=studio_data_cells)
+        #     location, current, maximum_people = single_studio_data.values()
+        #     studio = {"row_number": row_number,
+        #               "location": location, "current": current, "maximum_people": maximum_people}
+        #     studios.append(studio)
+        # --------------------------------------
+        df_studios = pd.read_html(Studio.__URL)[0]  # we just want the df
+
+        # Using an List comprehension / Iterating through an df
+        studios = [
+            {
+                "row_number": index,
+                "location": row.loc["Studio"], 
+                "current": row.loc["Aktuell"], 
+                "maximum_people": row.loc["Maximal"], 
+            }
+             for index, row in df_studios.iterrows()]
         return studios
 
-    @staticmethod
-    def __extract_studio_data_from_row(studio_row) -> dict:
-        """
-        Function name: extract_studio_data
-        Parameters:
-          - table_data_cells (list): A list of table data cells containing data for a single studio.
+    # ------------------- LEGACY -- BEFORE USING PANDAS ------------------- 
+    # @staticmethod
+    # def __extract_studio_data_from_row(studio_row) -> dict:
+    #     """
+    #     Function name: extract_studio_data
+    #     Parameters:
+    #       - table_data_cells (list): A list of table data cells containing data for a single studio.
 
-        This function extracts the location, current occupancy, and maximum
-         occupancy data from a list of table data cells for a single studio,
-          performs some validation, and returns a dictionary containing the extracted data.
-        The function first extracts the location data by stripping the leading and
-         trailing whitespaces and raises an assertion error if the location string is empty.
-        It then tries to convert the maximum and current occupancy data from string to
-         integers using the int() function and catches a ValueError if the conversion fails.
-          In case of an error, the function logs the error message using the root_logger object and
-           includes the exception traceback information.
-        Finally, if the data extraction and validation are successful,
-         the function returns a dictionary containing the extracted data with the keys "location",
-          "current", and "maximum_people".
+    #     This function extracts the location, current occupancy, and maximum
+    #      occupancy data from a list of table data cells for a single studio,
+    #       performs some validation, and returns a dictionary containing the extracted data.
+    #     The function first extracts the location data by stripping the leading and
+    #      trailing whitespaces and raises an assertion error if the location string is empty.
+    #     It then tries to convert the maximum and current occupancy data from string to
+    #      integers using the int() function and catches a ValueError if the conversion fails.
+    #       In case of an error, the function logs the error message using the root_logger object and
+    #        includes the exception traceback information.
+    #     Finally, if the data extraction and validation are successful,
+    #      the function returns a dictionary containing the extracted data with the keys "location",
+    #       "current", and "maximum_people".
 
-        """
+    #     """
 
-        location = studio_row[0].text.strip()
-        assert location != "", "The location string is not allowed to be empty!"
-        try:
-            maximum_people = int(studio_row[1].text)
-            current = int(studio_row[2].text)
-        except ValueError as e: 
-            # failed to convert string to integer 
-            root_logger.error(f'Failed to convert string to integer: {e}', exc_info=True)
-        else:
-            return {"location": location, "current": current, "maximum_people": maximum_people}
+    #     location = studio_row[0].text.strip()
+    #     assert location != "", "The location string is not allowed to be empty!"
+    #     try:
+    #         maximum_people = int(studio_row[1].text)
+    #         current = int(studio_row[2].text)
+    #     except ValueError as e: 
+    #         # failed to convert string to integer 
+    #         root_logger.error(f'Failed to convert string to integer: {e}', exc_info=True)
+    #     else:
+    #         return {"location": location, "current": current, "maximum_people": maximum_people}
+    # ------------------- LEGACY  ------------------- 
 
     @staticmethod
     def check_location_exists(location: str) -> bool:
