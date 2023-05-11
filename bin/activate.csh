@@ -8,7 +8,7 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 # Unset irrelevant variables.
 deactivate nondestructive
 
-setenv VIRTUAL_ENV "/Users/martin/Downloads/fitness-fabrik-script"
+setenv VIRTUAL_ENV "/Users/martin/Downloads/gym-tracker"
 
 set _OLD_VIRTUAL_PATH="$PATH"
 setenv PATH "$VIRTUAL_ENV/bin:$PATH"
@@ -17,8 +17,8 @@ setenv PATH "$VIRTUAL_ENV/bin:$PATH"
 set _OLD_VIRTUAL_PROMPT="$prompt"
 
 if (! "$?VIRTUAL_ENV_DISABLE_PROMPT") then
-    set prompt = "(fitness-fabrik-script) $prompt"
-    setenv VIRTUAL_ENV_PROMPT "(fitness-fabrik-script) "
+    set prompt = "(gym-tracker) $prompt"
+    setenv VIRTUAL_ENV_PROMPT "(gym-tracker) "
 endif
 
 alias pydoc python -m pydoc

@@ -183,9 +183,8 @@ class Studio:
                     same day and later than the current time, calculate the amount of minutes 
                     until the time of interest.
                     '''
-                    next_day = time_interested_in.get("start") > now.hour
                     sleep_time_in_minutes = calculate_sleep_time_in_minutes(
-                        time_interested_in=time_interested_in, current_time=now, next_day=next_day)
+                        time_interested_in=time_interested_in, current_time=now)
                     request_cycle_logger.info(
                         f"Not in the time interval {time_interested_in.get('start')}:00-{time_interested_in.get('end')}"
                         f":00 the user is interested in. Sleep until {time_interested_in.get('start')}:00! "

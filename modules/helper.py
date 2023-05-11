@@ -28,7 +28,7 @@ if __name__ != "__main__":
             return raw_html
             
     def calculate_sleep_time_in_minutes(
-            time_interested_in: dict[str, int], current_time: datetime.datetime, next_day: bool
+            time_interested_in: dict[str, int], current_time: datetime.datetime
     ) -> int:
         """
         Calculates the time difference between the current time and the time the user is interested in.
@@ -42,16 +42,8 @@ if __name__ != "__main__":
         :return: The time difference in minutes.
         """
 
-        # If the user is interested in a time that is tomorrow (e.g. interested in 17h, and it is 9h),
-        # then calculate the time difference until that time tomorrow (e.g. sleep for 8 hours)
-        if next_day:
-            # The number of hours until the interested time
-            hours_difference = time_interested_in.get("start") - current_time.hour
-            # The number of minutes until the next hour
-            minutes_difference = 60 - current_time.minute
-            # The total number of minutes to sleep
-            total_minutes = minutes_difference + (hours_difference - 1) * 60
-            return total_minutes
+        # If the start_time was past, then we're interested in the next day for the specified time
+        next_day = time_interested_in.get("start") < current_time.hour
 
         # If the user is interested in a time that is today (e.g. interested in 9h, and it is 17h),
         # then calculate the time difference until that time tomorrow (e.g. sleep for 16 hours)
@@ -59,7 +51,7 @@ if __name__ != "__main__":
         # When 00:00 is reached, current_time.hour will become smaller than time_interested_in.get("start")
         # which will cause to execute block 1 and calculate the amount of minutes until the point of time
         # at the same day
-        else:
+        if next_day:
             # The number of minutes until the next hour
             minutes_difference = 60 - current_time.minute
             # The number of hours until the interested time tomorrow
@@ -67,6 +59,18 @@ if __name__ != "__main__":
             # The total number of minutes to sleep
             total_minutes = minutes_difference + (hours_difference - 1) * 60
             return total_minutes
+
+        # If the user is interested in a time that is tomorrow (e.g. interested in 17h, and it is 9h),
+        # then calculate the time difference until that time tomorrow (e.g. sleep for 8 hours)
+        else:
+            # The number of hours until the interested time
+            hours_difference = time_interested_in.get("start") - current_time.hour
+            # The number of minutes until the next hour
+            minutes_difference = 60 - current_time.minute
+            # The total number of minutes to sleep
+            total_minutes = minutes_difference + (hours_difference - 1) * 60
+            return total_minutes
+            
 
 elif __name__ == "__main__":
     print(f"This module cannot be ran as the main program, instead must be imported.")

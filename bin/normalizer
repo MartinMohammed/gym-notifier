@@ -1,4 +1,4 @@
-#!/Users/martin/Downloads/fitness-fabrik-script/bin/python
+#!/Users/martin/Downloads/gym-tracker/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys
