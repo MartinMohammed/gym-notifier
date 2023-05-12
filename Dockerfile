@@ -13,8 +13,11 @@ COPY ./requirements.txt .
 # This line copies the .env file to the working directory
 COPY .env .
 
-# Copy over the virtual environment
-COPY ./venv ./venv
+# Create an venv environment 
+RUN python3 -m venv venv
+
+# # Copy over the virtual environment
+# COPY ./venv ./venv
 
 # This line copies the logging configuration file to the working directory
 COPY logging.conf .

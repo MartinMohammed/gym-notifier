@@ -35,7 +35,6 @@ fi
 
 
 # $? = special shell variable, sotres the exit status of the last command that was executed in the shell (0 = successfull, else not)
-
 # Make sure the venv environemt is activated
 source "$PWD/venv/bin/activate"
 
