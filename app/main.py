@@ -1,6 +1,6 @@
 # This module is run as the main program
 if __name__ == "__main__":
-    from decouple import config
+    # from decouple import config
     import sys
     import unittest
     import logging
@@ -41,7 +41,11 @@ if __name__ == "__main__":
     # Own classes 
     from modules import Studio 
 
-    TELEGRAM_CHAT_ID = config("MY_TELEGRAM_CHAT_ID")
+    # Dont copy the .env file inside the container, instead access shell set 
+    # env variables
+    
+    # TELEGRAM_CHAT_ID = config("MY_TELEGRAM_CHAT_ID")
+    TELEGRAM_CHAT_ID = os.environ.get("MY_TELEGRAM_CHAT_ID")
     Studio.instantiate_studios()
 
     # root_logger = logging.getLogger("root")

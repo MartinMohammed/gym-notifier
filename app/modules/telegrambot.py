@@ -7,15 +7,18 @@ if __name__ != "__main__":
      (development, production, stage, etc) without having to redeploy the app
     * store parameters in ini or .env files;
     '''
-    from decouple import config
+    # from decouple import config
     import requests
     import sys
+    import os
     import logging
 
     telegram_logger = logging.getLogger("telegram_logger")
 
-    TELEGRAM_API_ACCESS_TOKEN = config("TELEGRAM_API_ACESS_TOKEN")
-    TELEGRAM_CHAT_ID = config("MY_TELEGRAM_CHAT_ID")
+    # TELEGRAM_API_ACCESS_TOKEN = config("TELEGRAM_API_ACESS_TOKEN")
+    TELEGRAM_API_ACCESS_TOKEN = os.environ.get("TELEGRAM_API_ACESS_TOKEN")
+    # TELEGRAM_CHAT_ID = config("MY_TELEGRAM_CHAT_ID")
+    TELEGRAM_CHAT_ID = os.environ.get("MY_TELEGRAM_CHAT_ID")
     TELEGRAM_API_URL = "https://api.telegram.org"
 
 
