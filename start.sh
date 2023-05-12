@@ -47,7 +47,9 @@ else
 fi
 
 # Make sure all required packages are installed
-pip3 install -r "$PWD/requirements.txt"
+# Using --no-cache-dir ensures that the packages are downloaded fresh each time,
+#  which can help avoid issues caused by stale or outdated packages in the cache
+pip3 install --no-cache-dir -r "$PWD/requirements.txt"
 
 if [ $? -eq 0 ]; then 
     echo "Required packages were installed succesfully."
