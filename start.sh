@@ -34,27 +34,28 @@ if ! command -v python3 &> /dev/null; then
 fi
 
 
-# $? = special shell variable, sotres the exit status of the last command that was executed in the shell (0 = successfull, else not)
-# Make sure the venv environemt is activated
-source "$PWD/venv/bin/activate"
+# ------------------------ JOB TAKEN BY DOCKERFILE WHILE BUILDING PROCESS (IMAGE) ------------------------
+# # $? = special shell variable, sotres the exit status of the last command that was executed in the shell (0 = successfull, else not)
+# # Make sure the venv environemt is activated
+# source "$PWD/venv/bin/activate"
 
-if [ $? -eq 0 ]; then
-    echo "Venv environment was started succesfully."
-else
-    echo "There was an error in activating the venv python environment."
-    exit 1
-fi
+# if [ $? -eq 0 ]; then
+#     echo "Venv environment was started succesfully."
+# else
+#     echo "There was an error in activating the venv python environment."
+#     exit 1
+# fi
 
-# Make sure all required packages are installed
-# Using --no-cache-dir ensures that the packages are downloaded fresh each time,
-#  which can help avoid issues caused by stale or outdated packages in the cache
-pip3 install --no-cache-dir -r "$PWD/requirements.txt"
+# # Make sure all required packages are installed
+# # Using --no-cache-dir ensures that the packages are downloaded fresh each time,
+# #  which can help avoid issues caused by stale or outdated packages in the cache
+# pip3 install --no-cache-dir -r "$PWD/requirements.txt"
 
-if [ $? -eq 0 ]; then 
-    echo "Required packages were installed succesfully."
-else 
-    exit 1
-fi
+# if [ $? -eq 0 ]; then 
+#     echo "Required packages were installed succesfully."
+# else 
+#     exit 1
+# fi
 
 
 # --------------------- RUN THE PROGRAM ---------------------
