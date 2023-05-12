@@ -8,7 +8,7 @@ WORKDIR /gym-tracker-app
 ENV TZ=Europe/Berlin
 
 # This line copies the pip requirements package list to the working directory
-COPY ./venv/requirements.txt .
+COPY ./requirements.txt .
 
 # This line copies the .env file to the working directory
 COPY .env .
