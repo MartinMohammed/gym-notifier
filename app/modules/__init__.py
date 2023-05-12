@@ -15,4 +15,4 @@ except ImportError as iE:
     root_logger.critical("There was an error importing the modules inside the 'modules' package.")
     sys.exit(1)
 else: 
-    root_logger.info("Successfully imported the modules inside the 'modules' package.")
+    root_logger.info("Success: Import the modules inside the 'modules' package.")

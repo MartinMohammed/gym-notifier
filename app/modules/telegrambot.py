@@ -29,6 +29,7 @@ if __name__ != "__main__":
         try:
             response = requests.get(f"{TELEGRAM_API_URL}/bot{TELEGRAM_API_ACCESS_TOKEN}/{method_name}{query_string}") 
             response.raise_for_status()  # if status code is not 200 / OK
+            telegram_logger.info("Success: Message was sent.")
         except requests.exceptions.RequestException as e:
             # ! Telegram bot error logging
             telegram_logger.critical(f"Error with Telegram method call: {method_name}. {e}")

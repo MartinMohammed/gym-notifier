@@ -264,7 +264,7 @@ class Studio:
         except Exception as e:
             request_cycle_logger.error(e, exc_info=True)
         else:
-            request_cycle_logger.info(f"Successfully checked if studio matches user defined criteria!"
+            request_cycle_logger.info(f"Success: Check if studio matches user defined criteria!"
                                       f" ({'Yes' if studio_criteria_check.get('criteria_fulfilled') else 'No'})")
             return studio_criteria_check
 

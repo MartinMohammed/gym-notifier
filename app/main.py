@@ -6,6 +6,7 @@ if __name__ == "__main__":
     import logging
     import logging.config
     logging.config.fileConfig("logging.conf")
+    import os
 
     # ------------ DISCOVER AND RUN ALL THE TEST CASES IN A GIVEN DIR ------------
     # responsible for loading the tests 
@@ -13,7 +14,10 @@ if __name__ == "__main__":
 
     # Discover all the test cases in the directory that match the pattern
     # Returns an TestSuite object that contains all the discovered tests
-    test_suite = test_loader.discover(start_dir='./modules', pattern='test_*') 
+
+    # Will bring us to gym-tracker
+    cwd = os.getcwd()
+    test_suite = test_loader.discover(start_dir=os.path.join(cwd, "app", "modules"), pattern='test_*') 
 
     # test runner, running the tests and reporting the results
     test_runner = unittest.TextTestRunner() 

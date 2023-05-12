@@ -37,7 +37,7 @@ fi
 # $? = special shell variable, sotres the exit status of the last command that was executed in the shell (0 = successfull, else not)
 
 # Make sure the venv environemt is activated
-source "$PWD/bin/activate"
+source "$PWD/venv/bin/activate"
 
 if [ $? -eq 0 ]; then
     echo "Venv environment was started succesfully."
@@ -47,7 +47,7 @@ else
 fi
 
 # Make sure all required packages are installed
-pip3 install -r "$PWD/requirements.txt"
+pip3 install -r "$PWD/venv/requirements.txt"
 
 if [ $? -eq 0 ]; then 
     echo "Required packages were installed succesfully."
@@ -59,7 +59,7 @@ fi
 # --------------------- RUN THE PROGRAM ---------------------
 
 # Run the program as background process
-python3 "$PWD/main.py" $name $gym_name $target_minimum $start_time $end_time
+python3 "$PWD/app/main.py" $name $gym_name $target_minimum $start_time $end_time
 if [ $? -eq 0 ]; then
     echo "Program started successfully."
 else 
