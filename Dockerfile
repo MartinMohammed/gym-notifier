@@ -13,6 +13,9 @@ COPY ./requirements.txt .
 # This line copies the .env file to the working directory
 COPY .env .
 
+# Copy over the virtual environment
+COPY ./venv ./venv
+
 # This line copies the logging configuration file to the working directory
 COPY logging.conf .
 
