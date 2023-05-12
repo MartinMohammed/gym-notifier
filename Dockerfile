@@ -16,6 +16,14 @@ COPY .env .
 # Create an venv environment 
 RUN python3 -m venv venv
 
+# Installing Python packages with pip directly in the Dockerfile results in
+# a larger Docker image because the packages are installed within the image itself.
+# On the other hand, installing the packages inside a bash script that is run by the
+# Dockerfile at the end leads to a smaller image size, but the packages are not
+# directly available when running the container
+
+# RUN pip install --no-cache-dir -r requirements.txt 
+
 # # Copy over the virtual environment
 # COPY ./venv ./venv
 
