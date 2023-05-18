@@ -6,9 +6,12 @@ if __name__ != "__main__":
     # from log import log
     import logging 
     import logging.config
+    import sys
 
     # logging.config.fileConfig("logging.conf")
     request_cycle_logger = logging.getLogger("request_cycle")
+    root_logger = logging.getLogger(); 
+    
 
     # ------------------- LEGACY -- BEFORE USING PANDAS ------------------- 
     # def make_http_request(url: str):
@@ -27,6 +30,8 @@ if __name__ != "__main__":
     #     else:
     #         request_cycle_logger.info(f"Successfully made an Request to {url}.")
     #         return raw_html
+
+    
     # -------------------  ------------------- 
     def calculate_sleep_time_in_minutes(
             time_interested_in: dict[str, int], current_time: datetime.datetime
@@ -71,6 +76,15 @@ if __name__ != "__main__":
             # The total number of minutes to sleep
             total_minutes = minutes_difference + (hours_difference - 1) * 60
             return total_minutes
+    
+    def check_env_defined(env_var: str, name: str) -> None:
+        assert name is not None, "The name of the environement variable was not provided in 'check_env_defined' function call."
+        if (env_var is None or env_var == ""):
+            root_logger.critical("Could not read the environment variable: " + name)
+            sys.exit()
+        else: 
+            # All fine 
+            pass 
             
 
 elif __name__ == "__main__":

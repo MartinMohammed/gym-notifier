@@ -8,7 +8,7 @@ import sys
 root_logger = logging.getLogger()
 try:
     # from .helper import make_http_request
-    from .helper import calculate_sleep_time_in_minutes
+    from .helper import calculate_sleep_time_in_minutes, check_env_defined
     from .Studio import Studio 
     from .telegrambot import send_message
 except ImportError as iE:

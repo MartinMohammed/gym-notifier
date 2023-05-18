@@ -12,13 +12,17 @@ if __name__ != "__main__":
     import sys
     import os
     import logging
+    from decouple import config
+    from helper import check_env_defined
 
     telegram_logger = logging.getLogger("telegram_logger")
 
     # TELEGRAM_API_ACCESS_TOKEN = config("TELEGRAM_API_ACESS_TOKEN")
-    TELEGRAM_API_ACCESS_TOKEN = os.environ.get("TELEGRAM_API_ACESS_TOKEN")
+    TELEGRAM_API_ACCESS_TOKEN = os.environ.get("TELEGRAM_API_ACESS_TOKEN") or config("TELEGRAM_API_ACESS_TOKEN")
+    check_env_defined(TELEGRAM_API_ACCESS_TOKEN, name="Telegram API Access Token")
     # TELEGRAM_CHAT_ID = config("MY_TELEGRAM_CHAT_ID")
-    TELEGRAM_CHAT_ID = os.environ.get("MY_TELEGRAM_CHAT_ID")
+    TELEGRAM_CHAT_ID = os.environ.get("MY_TELEGRAM_CHAT_ID") or config("MY_TELEGRAM_CHAT_ID")
+    check_env_defined("Telegram Chat Id", name="Telegram Chat Id")
     TELEGRAM_API_URL = "https://api.telegram.org"
 
 

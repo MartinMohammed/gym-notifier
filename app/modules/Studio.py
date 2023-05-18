@@ -12,12 +12,12 @@ import logging
 import datetime
 # from bs4 import BeautifulSoup
 import pandas as pd
-# from decouple import config
+from decouple import config
 import os
 
 # Own libs
 # from .helper import make_http_request
-from .helper import calculate_sleep_time_in_minutes
+from .helper import calculate_sleep_time_in_minutes, check_env_defined
 from .telegrambot import send_message
 
 # ----------- GET LOGGER -----------
@@ -38,7 +38,8 @@ class Studio:
     all_dict = {}
     # 1. HTTP request an __URL to get the document 
     # __URL = config("FITNESS_FABRIK_BASE_URL")
-    __URL = os.environ.get("FITNESS_FABRIK_BASE_URL")
+    __URL = os.environ.get("FITNESS_FABRIK_BASE_URL") or config("FITNESS_FABRIK_BASE_URL")
+    check_env_defined(__URL, name="Fitness Website URL")
 
     # Static and Class Methods defined with a simple question: 
     # Do I need this functionality on my instances it'self', if the answer is no: 

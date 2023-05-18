@@ -5,6 +5,7 @@ if __name__ == "__main__":
     import unittest
     import logging
     import logging.config
+    from decouple import config
     logging.config.fileConfig("logging.conf")
     import os
 
@@ -39,13 +40,15 @@ if __name__ == "__main__":
     # time.sleep(10)
 
     # Own classes 
-    from modules import Studio 
+    from modules import Studio, check_env_defined
 
     # Dont copy the .env file inside the container, instead access shell set 
     # env variables
     
     # TELEGRAM_CHAT_ID = config("MY_TELEGRAM_CHAT_ID")
-    TELEGRAM_CHAT_ID = os.environ.get("MY_TELEGRAM_CHAT_ID")
+    TELEGRAM_CHAT_ID = os.environ.get("MY_TELEGRAM_CHAT_ID") or config("MY_TELEGRAM_CHAT_ID")
+    check_env_defined(TELEGRAM_CHAT_ID, name="Telegram_Chat_id")
+
     Studio.instantiate_studios()
 
     # root_logger = logging.getLogger("root")
